@@ -26,7 +26,7 @@ dis_width = 600
 dis_height = 400
 
 dis = pygame.display.set_mode((dis_width, dis_height))
-pygame.display.set_caption('Dragon')
+pygame.display.set_caption('Snake Master')
 
 clock = pygame.time.Clock()
 
@@ -97,7 +97,6 @@ def message(msg, color):
 
 
 def gameLoop():
-    First_Move = True
     game_over = False
     game_close = False
 
@@ -113,46 +112,22 @@ def gameLoop():
     foodx = round(random.randrange(0, dis_width - snake_block) / 10.0) * 10.0
     foody = round(random.randrange(0, dis_height - snake_block) / 10.0) * 10.0
 
+    #last_direction = None
+    direction = [None,None]
     while not game_over:
         success, img = cap.read()
-        last_direction = None
+
+        #if direction[0] != None:
+            #last_direction = direction[0]
+        #print(last_direction)
 
         direction = dir.pose(img)
         if direction[1] == "exit":
             game_close = True
-        if not First_Move:
-            last_direction = direction
-        print (direction[0])
+        #print (direction[0])
         # if direction[0] != None:
         # Hello
-
-
-
-        while game_close == True:
-            success, img = cap.read()
-            dis.fill(blue)
-            message("Game Over! 3 up to retry or 4 up to quit", red)
-            Your_score(Length_of_snake - 1)
-
-
-            pygame.display.update()
-
-            direction = dir.pose(img)
-            if direction[1] == "quit":
-                game_over = True
-                game_close = False
-            elif direction[1] == "continue":
-                gameLoop()
-
-            for event in pygame.event.get():
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_q:
-                        game_over = True
-                        game_close = False
-                    if event.key == pygame.K_c:
-                        gameLoop()
-
-
+        """
         opp_direction = None
 
         if last_direction == "right":
@@ -164,10 +139,14 @@ def gameLoop():
         elif last_direction == "up":
             opp_direction = "down"
 
-
+        #print(opp_direction)
         if opp_direction == direction:
+            print("Stop")
+            direction = last_direction
             pass
-        elif direction[0] == "left":
+        el"""
+
+        if direction[0] == "left":
             x1_change = -snake_block
             y1_change = 0
         elif direction[0] == "right":
@@ -216,6 +195,29 @@ def gameLoop():
 
         clock.tick(snake_speed)
 
+        while game_close == True:
+            success, img = cap.read()
+            dis.fill(blue)
+            message("Game Over! 3 up to retry or 4 up to quit", red)
+            Your_score(Length_of_snake - 1)
+
+
+            pygame.display.update()
+
+            direction = dir.pose(img)
+            if direction[1] == "quit":
+                game_over = True
+                game_close = False
+            elif direction[1] == "continue":
+                gameLoop()
+
+            for event in pygame.event.get():
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_q:
+                        game_over = True
+                        game_close = False
+                    if event.key == pygame.K_c:
+                        gameLoop()
     pygame.quit()
     quit()
 
