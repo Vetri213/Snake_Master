@@ -44,11 +44,15 @@ def Your_score(score):
     high_score(score)
     return score
 
+file = open("highscore.txt","r")
 
-highscore = 0
+old_highscore = int(file.read())
+file.close()
 
+highscore = old_highscore
 
 def high_score(score):
+    global old_highscore
     global highscore
     # Use highscore.txt to add the highscore - update it
     if (score > highscore):
@@ -97,6 +101,7 @@ def message(msg, color):
 
 
 def gameLoop():
+    opp = 0
     game_over = False
     game_close = False
 
@@ -114,7 +119,11 @@ def gameLoop():
 
     #last_direction = None
     direction = [None,None]
+    head =[None,None]
+    second = [None,None]
     while not game_over:
+        last_direction = direction[0]
+
         success, img = cap.read()
 
         #if direction[0] != None:
@@ -122,31 +131,50 @@ def gameLoop():
         #print(last_direction)
 
         direction = dir.pose(img)
-        if direction[1] == "exit":
-            game_close = True
+        # state = dir.count(img)
+        # if state == "exit":
+        #     game_close = True
         #print (direction[0])
         # if direction[0] != None:
         # Hello
-        """
+
         opp_direction = None
 
-        if last_direction == "right":
-            opp_direction = "left"
-        elif last_direction == "left":
-            opp_direction = "right"
-        elif last_direction == "down":
-            opp_direction = "up"
-        elif last_direction == "up":
-            opp_direction = "down"
+        # if last_direction == "right":
+        #     opp_direction = "left"
+        # elif last_direction == "left":
+        #     opp_direction = "right"
+        # elif last_direction == "down":
+        #     opp_direction = "up"
+        # elif last_direction == "up":
+        #     opp_direction = "down"
 
-        #print(opp_direction)
-        if opp_direction == direction:
-            print("Stop")
-            direction = last_direction
+        if (head[0] and second[0]):
+            if (head[0] == (second[0]+10)):
+                #Right
+                print("Right")
+                opp_direction = "left"
+            elif (head[0] == (second[0]-10)):
+                # Left
+                print("Left")
+                opp_direction = "right"
+            elif (head[1] == (second[1]-10)):
+                # Up
+                print("Up")
+                opp_direction = "down"
+            elif (head[1] == (second[1]+10)):
+                # Down
+                print("Down")
+                opp_direction = "up"
+        # #print(opp_direction)
+        # if opp_direction == direction:
+        #     print("Stop")
+        #     direction = last_direction
+        #     pass
+        #
+        if (direction[0] == opp_direction):
             pass
-        el"""
-
-        if direction[0] == "left":
+        elif direction[0] == "left":
             x1_change = -snake_block
             y1_change = 0
         elif direction[0] == "right":
@@ -176,6 +204,12 @@ def gameLoop():
         snake_Head.append(x1)
         snake_Head.append(y1)
         snake_List.append(snake_Head)
+        head = snake_Head
+        try:
+            second = snake_List[-2]
+        except:
+            pass
+        #print("Snake Head:",head,"Snake Second:",second)
         if len(snake_List) > Length_of_snake:
             del snake_List[0]
 
@@ -204,11 +238,15 @@ def gameLoop():
 
             pygame.display.update()
 
-            direction = dir.pose(img)
-            if direction[1] == "quit":
+            state = dir.count(img)
+            if state == "quit":
+                if (old_highscore < Length_of_snake - 1):
+                    file = open("highscore.txt", "w")
+                    file.write(str(Length_of_snake-1))
+                    file.close()
                 game_over = True
                 game_close = False
-            elif direction[1] == "continue":
+            elif state == "continue":
                 gameLoop()
 
             for event in pygame.event.get():

@@ -74,7 +74,7 @@ class handDetector():
             fingers_final.append(fingers[i])
 
 
-        # print (fingers)
+        print (fingers)
         totalFingers = fingers_final.count(1)
 
         return fingers_final
@@ -96,8 +96,8 @@ def main():
         success, img = cap.read()
         img = detector.findHands(img)
         lmList = detector.findPosition(img)
-        if len(lmList) != 0:
-            print (lmList[8])
+        # if len(lmList) != 0:
+        #     print (lmList[8])
 
         cTime = time.time()
         fps = 1 / (cTime - pTime)

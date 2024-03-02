@@ -1,10 +1,12 @@
 import HandTrackingModule as htm
-
+import cv2
 detector = htm.handDetector(detectionCon=0.75)
 tipIds = [4, 8, 12, 16, 20]
 
 def pose(img):
     img = detector.findHands(img)
+    # cv2.imshow("Image", img)
+    # cv2.waitKey(1)
     first_lmList = detector.findPosition(img, draw=False)
     second_lmList = detector.findPosition(img, draw=False, handNo = 1)
     pose = [None,None]
@@ -32,15 +34,57 @@ def pose(img):
                 fingers.append(1)
             else:
                 fingers.append(0)
-        if fingers.count(1) ==4:
+        if fingers.count(1) == 4:
             pose[1] = "quit"
         elif fingers.count(1) == 3:
             pose[1] = "continue"
         elif fingers.count(1) == 2:
             if fingers[1] and fingers[4]:
                 pose[1] = "exit"
-
+        #print(fingers.count)
     return pose
+def count(img):
+    img = detector.findHands(img)
+    lmList = detector.findPosition(img, draw=False)
+    # print(lmList)
+    if len(lmList) != 0:
+        fingers = []
+
+        # Thumb
+        if lmList[tipIds[0]][1] > lmList[tipIds[0] - 1][1]:
+            fingers.append(1)
+        else:
+            fingers.append(0)
+
+        for id in range(1, 5):
+            if lmList[tipIds[id]][2] < lmList[tipIds[id] - 2][2]:
+                fingers.append(1)
+            else:
+                fingers.append(0)
+
+        # print (fingers)
+        totalFingers = fingers.count(1)
+        if totalFingers ==4:
+            return "quit"
+        elif totalFingers == 3:
+            return "continue"
+        elif totalFingers == 2:
+            if fingers[1] and fingers[4]:
+                return "exit"
+        # print (totalFingers)
+        return "0"
+def main():
+    wCam, hCam = 640, 480
+
+    cap = cv2.VideoCapture(0)
+    cap.set(3, wCam)
+    cap.set(4, hCam)
+    while True:
+        success, img = cap.read()
+        pose(img)
+
+if __name__ == "__main__":
+    main()
 
     """
         up_down = "normal"
