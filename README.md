@@ -15,6 +15,10 @@ I created this project as a fun way to learn more about hand-pose estimation and
 ![plot](hand_left.png)
 
 Make sure to keep your thumb closed**
+
+Watch a demonstration of my project by clicking on the link below!
+[![IMAGE ALT TEXT](Snake_Master.png)](https://www.youtube.com/watch?v=bNVpjryaT6w)
+
 ## Try it out!!
 
 ```bash
